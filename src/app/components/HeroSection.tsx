@@ -17,15 +17,14 @@ export function HeroSection() {
                 ✨ Diseñadora UX/UI
               </span>
             </div>
-            
+
             <h1 className="text-4xl lg:text-5xl leading-tight">
               Diseño experiencias digitales que <span className="text-[#AB9DFF]">convierten</span>
             </h1>
-            
+
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Transformo ideas en productos digitales intuitivos, funcionales y visualmente atractivos que conectan con las personas.
-            </p>
-            
+              Soy diseñadora UX/UI y transformo ideas en productos digitales intuitivos, funcionales y visualmente atractivos, creando experiencias que conectan con las personas y aportan valor a cada proyecto.            </p>
+
             <div className="flex flex-wrap gap-4 justify-center">
               <Button
                 asChild
@@ -49,7 +48,7 @@ export function HeroSection() {
           </div>
         </div>
       </div>
-      
+
       {/* Decoración: sin captura de puntero para no tapar botones */}
       <div className="pointer-events-none absolute top-10 right-10 w-20 h-20 bg-[#E3FC87]/40 rounded-full opacity-60"></div>
       <div className="pointer-events-none absolute bottom-20 left-20 w-16 h-16 bg-[#FFB2F7]/40 rounded-full opacity-60"></div>

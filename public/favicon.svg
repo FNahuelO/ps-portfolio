@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" role="img" aria-label="Priscila Sarmiento">
+  <defs>
+    <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#AB9DFF" />
+      <stop offset="100%" stop-color="#FFB2F7" />
+    </linearGradient>
+  </defs>
+  <rect width="40" height="40" rx="16" fill="url(#logo-gradient)" />
+  <text
+    x="20"
+    y="21"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    fill="#ffffff"
+    font-family="ui-sans-serif, system-ui, -apple-system, sans-serif"
+    font-size="22"
+    font-weight="500"
+  >
+    PS
+  </text>
+</svg>

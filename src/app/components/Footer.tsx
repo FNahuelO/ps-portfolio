@@ -3,11 +3,11 @@ import { CONTACT_EMAIL, mailtoSubject } from "../site";
 
 export function Footer() {
   const socialLinks = [
-    { icon: Linkedin, href: "#", label: "LinkedIn" },
-    { icon: Dribbble, href: "#", label: "Dribbble" },
+    { icon: Linkedin, href: "https://www.linkedin.com/in/priscila-sarmiento/", label: "LinkedIn" },
+    //{ icon: Dribbble, href: "#", label: "Dribbble" },
     { icon: Instagram, href: "#", label: "Instagram" },
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Github, href: "#", label: "GitHub" },
+    //{ icon: Twitter, href: "#", label: "Twitter" },
+    //{ icon: Github, href: "#", label: "GitHub" },
   ];
 
   const links = {
@@ -46,6 +46,7 @@ export function Footer() {
                   <a
                     key={index}
                     href={social.href}
+                    target="_blank"
                     aria-label={social.label}
                     className="w-10 h-10 flex items-center justify-center bg-white/10 rounded-full hover:bg-white hover:text-[#253AB2] transition-all duration-300"
                   >
@@ -62,7 +63,7 @@ export function Footer() {
             <ul className="space-y-3">
               {links.navigation.map((link, index) => (
                 <li key={index}>
-                  <a 
+                  <a
                     href={link.href}
                     className="text-[#C0E0FF] hover:text-white transition-colors duration-200 text-sm"
                   >
@@ -79,7 +80,7 @@ export function Footer() {
             <ul className="space-y-3">
               {links.contact.map((link, index) => (
                 <li key={index}>
-                  <a 
+                  <a
                     href={link.href}
                     className="text-[#C0E0FF] hover:text-white transition-colors duration-200 text-sm"
                   >
@@ -104,14 +105,7 @@ export function Footer() {
         <div className="pt-8 border-t border-white/20">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-[#C0E0FF]">
             <p>© 2026 Priscila Sarmiento. Todos los derechos reservados.</p>
-            <div className="flex gap-6">
-              <a href="#" className="hover:text-white transition-colors">
-                Política de privacidad
-              </a>
-              <a href="#" className="hover:text-white transition-colors">
-                Términos de uso
-              </a>
-            </div>
+
           </div>
         </div>
       </div>

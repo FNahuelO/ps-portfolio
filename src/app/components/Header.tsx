@@ -21,9 +21,14 @@ export function Header() {
       <div className="container mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <a href="#inicio" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#AB9DFF] to-[#FFB2F7] rounded-2xl flex items-center justify-center text-white shadow-lg">
-              <span className="text-xl">P</span>
-            </div>
+            <img
+              src="/favicon.svg"
+              alt=""
+              width={40}
+              height={40}
+              className="h-10 w-10 rounded-2xl shadow-lg"
+              aria-hidden
+            />
             <span className="text-lg hidden sm:block">Priscila Sarmiento</span>
           </a>
 
