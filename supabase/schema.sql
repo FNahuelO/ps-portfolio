@@ -41,6 +41,20 @@ create policy "projects_admin_delete" on public.projects
   for delete to authenticated
   using (true);
 
+-- Colores guardados desde el panel (paleta personalizada)
+create table if not exists public.saved_colors (
+  id uuid primary key default gen_random_uuid(),
+  hex text not null unique,
+  created_at timestamptz not null default now()
+);
+
+alter table public.saved_colors enable row level security;
+
+drop policy if exists "saved_colors_admin_all" on public.saved_colors;
+create policy "saved_colors_admin_all" on public.saved_colors
+  for all to authenticated
+  using (true) with check (true);
+
 -- Bucket de imágenes
 insert into storage.buckets (id, name, public)
 values ('project-images', 'project-images', true)

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
-import { listPublishedProjects, type Project } from "../../lib/projects";
+import { colorToCss, listPublishedProjects, type Project } from "../../lib/projects";
 import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
@@ -10,15 +10,23 @@ export function ProjectsSection() {
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
 
   useEffect(() => {
-    listPublishedProjects()
-      .then((data) => {
-        setProjects(data);
-        setStatus("ready");
-      })
-      .catch((err) => {
-        console.error(err);
-        setStatus("error");
-      });
+    const load = () =>
+      listPublishedProjects()
+        .then((data) => {
+          setProjects(data);
+          setStatus("ready");
+        })
+        .catch((err) => {
+          console.error(err);
+          setStatus("error");
+        });
+
+    load();
+    const onVisible = () => {
+      if (document.visibilityState === "visible") load();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
   }, []);
 
   return (
@@ -49,7 +57,10 @@ export function ProjectsSection() {
               key={project.id}
               className="group"
             >
-              <div className={`${project.bg_color} rounded-[40px] overflow-hidden hover:shadow-2xl transition-all duration-300 border border-white p-6`}>
+              <div
+                style={{ backgroundColor: colorToCss(project.bg_color) }}
+                className="rounded-[40px] overflow-hidden hover:shadow-2xl transition-all duration-300 border border-white p-6"
+              >
                 <div className="relative overflow-hidden rounded-[30px] aspect-[4/3] mb-6">
                   <ImageWithFallback
                     src={project.image_url}

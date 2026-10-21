@@ -16,11 +16,44 @@ export type Project = {
 export type ProjectInput = Omit<Project, "id" | "created_at">;
 
 export const BG_COLORS = [
-  { value: "bg-[#C0E0FF]/30", label: "Celeste", swatch: "#C0E0FF" },
-  { value: "bg-[#FFB2F7]/20", label: "Rosa", swatch: "#FFB2F7" },
-  { value: "bg-[#B8A2FF]/20", label: "Lila", swatch: "#B8A2FF" },
-  { value: "bg-[#AB9DFF]/20", label: "Violeta", swatch: "#AB9DFF" },
+  { value: "bg-[#C0E0FF]/30", label: "Celeste" },
+  { value: "bg-[#FFB2F7]/20", label: "Rosa" },
+  { value: "bg-[#B8A2FF]/20", label: "Lila" },
+  { value: "bg-[#AB9DFF]/20", label: "Violeta" },
 ];
+
+/**
+ * `bg_color` admite el formato heredado `bg-[#RRGGBB]/NN` (opacidad en %)
+ * o un hex plano `#RRGGBB` elegido con el picker.
+ */
+export function parseColor(value: string): { hex: string; alpha: number } {
+  const legacy = value.match(/^bg-\[(#[0-9a-fA-F]{6})\](?:\/(\d{1,3}))?$/);
+  if (legacy) return { hex: legacy[1].toUpperCase(), alpha: legacy[2] ? Number(legacy[2]) / 100 : 1 };
+  if (/^#[0-9a-fA-F]{6}$/.test(value)) return { hex: value.toUpperCase(), alpha: 1 };
+  return { hex: "#C0E0FF", alpha: 0.3 };
+}
+
+export function colorToCss(value: string): string {
+  const { hex, alpha } = parseColor(value);
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
+}
+
+export async function listSavedColors(): Promise<string[]> {
+  const { data, error } = await supabase
+    .from("saved_colors")
+    .select("hex")
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  return (data ?? []).map((c) => c.hex);
+}
+
+export async function saveColor(hex: string): Promise<void> {
+  const { error } = await supabase
+    .from("saved_colors")
+    .upsert({ hex: hex.toUpperCase() }, { onConflict: "hex", ignoreDuplicates: true });
+  if (error) throw error;
+}
 
 const BUCKET = "project-images";
 

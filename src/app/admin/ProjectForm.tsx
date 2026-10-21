@@ -3,12 +3,17 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import {
   BG_COLORS,
+  colorToCss,
   createProject,
+  listSavedColors,
+  parseColor,
+  saveColor,
   updateProject,
   uploadImage,
   type Project,
 } from "../../lib/projects";
 import { Button } from "../components/ui/button";
+import { Checkbox } from "../components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -43,7 +48,7 @@ type Props = {
   onOpenChange: (open: boolean) => void;
   project: Project | null;
   nextPosition: number;
-  onSaved: () => void;
+  onSaved: (project: Project) => void;
 };
 
 function toFormValues(project: Project | null): FormValues {
@@ -63,16 +68,27 @@ export function ProjectForm({ open, onOpenChange, project, nextPosition, onSaved
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ defaultValues: toFormValues(project) });
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>("");
+  const [savedColors, setSavedColors] = useState<string[]>([]);
+  const [saveNewColor, setSaveNewColor] = useState(false);
+
+  const bgColor = watch("bg_color");
+  const isNewColor =
+    !BG_COLORS.some((c) => c.value === bgColor) && !savedColors.includes(bgColor);
 
   useEffect(() => {
     if (!open) return;
     reset(toFormValues(project));
     setFile(null);
     setPreview(project?.image_url ?? "");
+    setSaveNewColor(false);
+    listSavedColors()
+      .then(setSavedColors)
+      .catch((err) => console.error(err));
   }, [open, project, reset]);
 
   useEffect(() => {
@@ -90,6 +106,10 @@ export function ProjectForm({ open, onOpenChange, project, nextPosition, onSaved
     let step = "subir la imagen";
     try {
       const image_url = file ? await uploadImage(file) : project!.image_url;
+      if (isNewColor && saveNewColor) {
+        step = "guardar el color";
+        await saveColor(values.bg_color);
+      }
       step = "guardar el trabajo";
       const data = {
         title: values.title.trim(),
@@ -103,14 +123,11 @@ export function ProjectForm({ open, onOpenChange, project, nextPosition, onSaved
         published: values.published,
         image_url,
       };
-      if (project) {
-        await updateProject(project.id, data);
-        toast.success("Trabajo actualizado");
-      } else {
-        await createProject({ ...data, position: nextPosition });
-        toast.success("Trabajo creado");
-      }
-      onSaved();
+      const saved = project
+        ? await updateProject(project.id, data)
+        : await createProject({ ...data, position: nextPosition });
+      toast.success(project ? "Trabajo actualizado" : "Trabajo creado");
+      onSaved(saved);
       onOpenChange(false);
     } catch (err) {
       console.error(err);
@@ -169,25 +186,55 @@ export function ProjectForm({ open, onOpenChange, project, nextPosition, onSaved
             <Controller
               control={control}
               name="bg_color"
-              render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {BG_COLORS.map((c) => (
-                      <SelectItem key={c.value} value={c.value}>
-                        <span
-                          className="inline-block h-4 w-4 rounded-full border"
-                          style={{ backgroundColor: c.swatch }}
-                        />
-                        {c.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
+              render={({ field }) => {
+                const options = [
+                  ...BG_COLORS,
+                  ...savedColors.map((hex) => ({ value: hex, label: hex })),
+                ];
+                if (!options.some((o) => o.value === field.value)) {
+                  options.push({ value: field.value, label: `Personalizado ${parseColor(field.value).hex}` });
+                }
+                return (
+                  <div className="flex gap-2">
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="flex-1">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {options.map((c) => (
+                          <SelectItem key={c.value} value={c.value}>
+                            <span
+                              className="inline-block h-4 w-4 rounded-full border"
+                              style={{ backgroundColor: colorToCss(c.value) }}
+                            />
+                            {c.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <input
+                      type="color"
+                      aria-label="Elegir color personalizado"
+                      value={parseColor(field.value).hex.toLowerCase()}
+                      onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                      className="h-9 w-12 cursor-pointer rounded-md border bg-transparent p-1"
+                    />
+                  </div>
+                );
+              }}
             />
+            {isNewColor && (
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="save-color"
+                  checked={saveNewColor}
+                  onCheckedChange={(checked) => setSaveNewColor(checked === true)}
+                />
+                <Label htmlFor="save-color" className="font-normal">
+                  Guardar este color en la paleta
+                </Label>
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">

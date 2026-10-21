@@ -3,7 +3,13 @@ import { Link } from "react-router";
 import { ArrowDown, ArrowUp, ExternalLink, LogOut, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "../../lib/supabase";
-import { deleteProject, listProjects, updateProject, type Project } from "../../lib/projects";
+import {
+  colorToCss,
+  deleteProject,
+  listProjects,
+  updateProject,
+  type Project,
+} from "../../lib/projects";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -86,6 +92,15 @@ export function AdminPage() {
       toast.error("No se pudo reordenar.");
       load();
     }
+  }
+
+  function handleSaved(saved: Project) {
+    setProjects((prev) =>
+      prev.some((p) => p.id === saved.id)
+        ? prev.map((p) => (p.id === saved.id ? saved : p))
+        : [...prev, saved],
+    );
+    load();
   }
 
   async function confirmDelete() {
@@ -195,7 +210,10 @@ export function AdminPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className={`${project.bg_color} rounded-lg h-12 w-16 overflow-hidden`}>
+                      <div
+                        style={{ backgroundColor: colorToCss(project.bg_color) }}
+                        className="rounded-lg h-12 w-16 overflow-hidden"
+                      >
                         <img src={project.image_url} alt="" className="h-full w-full object-contain" />
                       </div>
                     </TableCell>
@@ -261,7 +279,7 @@ export function AdminPage() {
         onOpenChange={setFormOpen}
         project={editing}
         nextPosition={nextPosition}
-        onSaved={load}
+        onSaved={handleSaved}
       />
 
       <AlertDialog open={!!toDelete} onOpenChange={(open) => !open && setToDelete(null)}>
