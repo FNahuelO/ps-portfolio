@@ -87,8 +87,10 @@ export function ProjectForm({ open, onOpenChange, project, nextPosition, onSaved
       toast.error("Subí una imagen para el trabajo.");
       return;
     }
+    let step = "subir la imagen";
     try {
       const image_url = file ? await uploadImage(file) : project!.image_url;
+      step = "guardar el trabajo";
       const data = {
         title: values.title.trim(),
         description: values.description.trim(),
@@ -112,7 +114,8 @@ export function ProjectForm({ open, onOpenChange, project, nextPosition, onSaved
       onOpenChange(false);
     } catch (err) {
       console.error(err);
-      toast.error("No se pudo guardar el trabajo.");
+      const message = err instanceof Object && "message" in err ? String(err.message) : String(err);
+      toast.error(`No se pudo ${step}: ${message}`);
     }
   }
 
@@ -126,7 +129,9 @@ export function ProjectForm({ open, onOpenChange, project, nextPosition, onSaved
           </DialogDescription>
         </DialogHeader>
 
-        <form id="project-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form id="project-form" onSubmit={handleSubmit(onSubmit, () =>
+            toast.error("Completá título, descripción y link del proyecto."),
+          )} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="title">Título</Label>
             <Input id="title" {...register("title", { required: true })} aria-invalid={!!errors.title} />
