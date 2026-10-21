@@ -142,6 +142,7 @@ export function ProjectForm({ open, onOpenChange, project, nextPosition, onSaved
             <Textarea
               id="description"
               rows={3}
+              className="max-h-64 overflow-y-auto"
               {...register("description", { required: true })}
               aria-invalid={!!errors.description}
             />
