@@ -42,9 +42,6 @@ export function Header() {
             <a href="#servicios" className={navLinkClass}>
               Servicios
             </a>
-            <a href="#testimonios" className={navLinkClass}>
-              Sobre mí
-            </a>
             <Button asChild className="bg-[#AB9DFF] hover:bg-[#253AB2] text-white rounded-full shadow-lg">
               <a href={mailtoSubject("Contactar")}>Contactar</a>
             </Button>
@@ -75,11 +72,6 @@ export function Header() {
                 <SheetClose asChild>
                   <a href="#servicios" className={sheetLinkClass}>
                     Servicios
-                  </a>
-                </SheetClose>
-                <SheetClose asChild>
-                  <a href="#testimonios" className={sheetLinkClass}>
-                    Sobre mí
                   </a>
                 </SheetClose>
                 <SheetClose asChild>

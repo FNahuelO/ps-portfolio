@@ -1,35 +1,25 @@
+import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
-import { mailtoSubject } from "../site";
+import { listPublishedProjects, type Project } from "../../lib/projects";
 import { Button } from "./ui/button";
+import { Skeleton } from "./ui/skeleton";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 
 export function ProjectsSection() {
-  const projects = [
-    {
-      title: "Trabajo Ya",
-      description: "Plataforma de empleo en Argentina que conecta personas y empresas de forma simple, rápida y 100% digital.",
-      image: "/trabajoya.png",
-      tags: ["UX Research", "UI Design", "Mobile", "Dashboard"],
-      bgColor: "bg-[#C0E0FF]/30",
-      url: "https://web.trabajo-ya.com",
-    },
-    {
-      title: "CEPPA",
-      description: "Diseño completo de plataforma web y mobile para el Centro de Psicoterapias.",
-      image: "/ceppa.png",
-      tags: ["Dashboard", "Web"],
-      bgColor: "bg-[#FFB2F7]/20",
-      url: "https://ceppa.com.ar",
-    },
-    {
-      title: "Sistema de Gestión de Citas",
-      description: "Plataforma completa de gestión de citas con app móvil y panel administrativo web.",
-      image: "/barberia.png",
-      tags: ["Dashboard", "Web"],
-      bgColor: "bg-[#B8A2FF]/20",
-      url: "https://www.figma.com/design/wbWjZJPCE1RmK1ehpjCnGx/Gestionador-de-Citas-Barberia?node-id=0-1&p=f&t=RWtoda1MvCF6p5F4-0",
-    },
-  ];
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+
+  useEffect(() => {
+    listPublishedProjects()
+      .then((data) => {
+        setProjects(data);
+        setStatus("ready");
+      })
+      .catch((err) => {
+        console.error(err);
+        setStatus("error");
+      });
+  }, []);
 
   return (
     <section id="proyectos" className="scroll-mt-24 py-20 bg-white relative overflow-hidden">
@@ -43,16 +33,26 @@ export function ProjectsSection() {
           </p>
         </div>
 
+        {status === "error" && (
+          <p className="text-center text-gray-500">
+            No pudimos cargar los proyectos en este momento.
+          </p>
+        )}
+
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((project, index) => (
+          {status === "loading" &&
+            Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="rounded-[40px] h-[460px]" />
+            ))}
+          {projects.map((project) => (
             <div
-              key={index}
+              key={project.id}
               className="group"
             >
-              <div className={`${project.bgColor} rounded-[40px] overflow-hidden hover:shadow-2xl transition-all duration-300 border border-white p-6`}>
+              <div className={`${project.bg_color} rounded-[40px] overflow-hidden hover:shadow-2xl transition-all duration-300 border border-white p-6`}>
                 <div className="relative overflow-hidden rounded-[30px] aspect-[4/3] mb-6">
                   <ImageWithFallback
-                    src={project.image}
+                    src={project.image_url}
                     alt={project.title}
                     className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                   />
@@ -60,7 +60,7 @@ export function ProjectsSection() {
 
                 <div className="space-y-4">
                   <div className="flex flex-wrap gap-2">
-                    {project.tags.map((tag, tagIndex) => (
+                    {(project.tags ?? []).map((tag, tagIndex) => (
                       <span
                         key={tagIndex}
                         className="px-3 py-1 bg-white text-[#253AB2] rounded-full text-xs shadow-sm"
@@ -86,6 +86,7 @@ export function ProjectsSection() {
                     <a
                       href={project.url}
                       target="_blank"
+                      rel="noreferrer"
                     >
                       Ver proyecto
                       <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />

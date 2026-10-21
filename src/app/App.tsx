@@ -4,7 +4,6 @@ import { MetricsSection } from "./components/MetricsSection";
 import { ServicesSection } from "./components/ServicesSection";
 import { ProjectsSection } from "./components/ProjectsSection";
 import { ProcessSection } from "./components/ProcessSection";
-import { TestimonialsSection } from "./components/TestimonialsSection";
 import { CTASection } from "./components/CTASection";
 import { Footer } from "./components/Footer";
 
@@ -18,7 +17,6 @@ export default function App() {
         <ServicesSection />
         <ProjectsSection />
         <ProcessSection />
-        <TestimonialsSection />
         <CTASection />
       </main>
       <Footer />

@@ -15,7 +15,6 @@ export function Footer() {
       { name: "Inicio", href: "#inicio" },
       { name: "Proyectos", href: "#proyectos" },
       { name: "Servicios", href: "#servicios" },
-      { name: "Sobre mí", href: "#testimonios" },
     ],
     contact: [
       { name: "Contacto", href: "#contacto" },
